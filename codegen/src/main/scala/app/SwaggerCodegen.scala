@@ -59,7 +59,7 @@ object SwaggerCodegen extends App {
     val apiVersion = "v" + swagger.getInfo.getVersion
       .takeWhile(_ != '.')
       .mkString // Semantic versioning, major / minor updates should force a new class
-    println(s"# Codegeneration for Swaggerdoc at [${f.pathAsString}] $apiVersion")
+    println(s"# Codegeneration for Swaggerdoc at [\${f.pathAsString}] \$apiVersion")
 
     /*
     Create Models
