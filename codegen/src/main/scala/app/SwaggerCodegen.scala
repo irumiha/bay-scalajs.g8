@@ -280,7 +280,7 @@ object SwaggerCodegen extends App {
                    |optApiKey match {
                    |  case None => Unauthorized.asFuture
                    |  case Some(apiKey) =>
-                   |    constructResult($methodName(${op.getParameters.toVector
+                   |    constructResult(\$methodName(\${op.getParameters.toVector
                            .filter(e => Seq("query", "path").contains(e.getIn.toLowerCase))
                            .map(e => s"\${e.getName}")
                            .:+("apiKey")
