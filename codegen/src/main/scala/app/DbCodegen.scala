@@ -35,7 +35,7 @@ object DbCodegen extends App {
     val user = config.getString(s"slick.dbs.\$short.db.user")
     val password = config.getString(s"slick.dbs.\$short.db.password")
 
-    val excluded = List("schema_version") ++ config.getStringList(s"slick.dbs.$short.db.exclude")
+    val excluded = List("schema_version") ++ config.getStringList(s"slick.dbs.\$short.db.exclude")
 
     val profile = CustomizedPgDriver
     val db = CustomizedPgDriver.api.Database.forURL(url, driver = driver, user = user, password = password)
