@@ -50,7 +50,7 @@ object SwaggerCodegen extends App {
     }
 
     if (p.getRequired || nested) tpe
-    else s"Option[$tpe]"
+    else s"Option[\$tpe]"
   }
 
   swaggers.foreach(e => createForConfig(e._1, e._2))
