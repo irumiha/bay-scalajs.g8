@@ -306,7 +306,7 @@ object SwaggerCodegen extends App {
                    |constructResult(\$methodName(\${op.getParameters.toVector
                            .filter(e => Seq("query", "path").contains(e.getIn.toLowerCase))
                            .map(e => s"\${e.getName}")
-                           .mkString(", ")})${if (resultType == "Result") ""
+                           .mkString(", ")})\${if (resultType == "Result") ""
                          else ".map(e => Ok(e.asJson))"})
                     """.stripMargin.trim
                   }
