@@ -258,7 +258,7 @@ object SwaggerCodegen extends App {
                   val baseQueryParameter =
                     if (queryParameter.isEmpty) ""
                     else {
-                      s" ? ${queryParameter.mkString(" ? ")}"
+                      s" ? \${queryParameter.mkString(" ? ")}"
                     }
 
                   val (queryParameterStr, hasQueryApiKey) = security match {
@@ -324,9 +324,9 @@ object SwaggerCodegen extends App {
                         if (e.getType.contains("integer")) "Int" else "String"
 
                       if (e.getRequired) {
-                        s"${e.getName}: $tpe"
+                        s"\${e.getName}: \$tpe"
                       } else {
-                        s"${e.getName}: Option[$tpe]"
+                        s"\${e.getName}: Option[\$tpe]"
                       }
                     } ++ (security match { // Add security specific parameters
                     case Some((name, e: _root_.io.swagger.models.auth.ApiKeyAuthDefinition)) =>
@@ -337,15 +337,15 @@ object SwaggerCodegen extends App {
 
                   // Functions to implement
                   val abstractFunc =
-                    s"""def $methodName(${params
-                      .mkString(", ")})(implicit request: Request[${body2content(consumeType)}]): HttpResult[$resultType]"""
+                    s"""def \$methodName(\${params
+                      .mkString(", ")})(implicit request: Request[\${body2content(consumeType)}]): HttpResult[\$resultType]"""
                   RouterCase(routerCase.mkString, abstractFunc)
               }
         }
 
       val template =
         s"""
-         |package controllers.swagger.$apiVersion.$packageName
+         |package controllers.swagger.\$apiVersion.\$packageName
          |
          |import controllers.ExtendedController
          |import io.circe.Json
@@ -357,14 +357,14 @@ object SwaggerCodegen extends App {
          |import play.api.routing._
          |import play.api.routing.sird._
          |import cats.implicits._
-         |import shared.models.swagger.${f.nameWithoutExtension}.$apiVersion._
+         |import shared.models.swagger.\${f.nameWithoutExtension}.\$apiVersion._
          |
-         |trait $routerName extends ExtendedController with SimpleRouter with Circe {
+         |trait \$routerName extends ExtendedController with SimpleRouter with Circe {
          |  def routes: Router.Routes = {
-         |   ${routerCases.map(_.routerCase).mkString}
+         |   \${routerCases.map(_.routerCase).mkString}
          |  }
          |
-         |  ${routerCases.map(_.abstractfunc).mkString("\n")}
+         |  \${routerCases.map(_.abstractfunc).mkString("\n")}
          |}
          |
          """.trim.stripMargin
