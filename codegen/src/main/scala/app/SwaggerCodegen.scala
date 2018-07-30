@@ -84,9 +84,9 @@ object SwaggerCodegen extends App {
     } {
       val packageName = f.nameWithoutExtension.toLowerCase.takeWhile(_ != '_')
       val routerName = swaggerTag.toUpperCamelCase + "Router"
-      println(s"- Running Codegen for Swagger Tag $swaggerTag")
+      println(s"- Running Codegen for Swagger Tag \$swaggerTag")
       val target =
-        file"server/app/controllers/swagger/$apiVersion/$packageName/$routerName.scala"
+        file"server/app/controllers/swagger/\$apiVersion/$packageName/\$routerName.scala"
 
       case class RouterCase(routerCase: String, abstractfunc: String)
 
@@ -96,7 +96,7 @@ object SwaggerCodegen extends App {
             .contains(swaggerTag) || (swaggerTag == "default" && e.getTags.isEmpty)))
         .flatMap {
           case (strPath, path) =>
-            println(s"-- Creating Router for $strPath")
+            println(s"-- Creating Router for \$strPath")
 
             val playPath = strPath
               .split('/')
