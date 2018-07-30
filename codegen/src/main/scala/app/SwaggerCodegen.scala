@@ -181,7 +181,7 @@ object SwaggerCodegen extends App {
 
                   val body2parser = Map[RequestBodyType, String](
                     NoBody -> "",
-                    JsonBody -> inClassTpe.fold("parse.circe")(e => s"(circe.json[$e])"),
+                    JsonBody -> inClassTpe.fold("parse.circe")(e => s"(circe.json[\$e])"),
                     MultipartBody -> "(parse.multipartFormData)",
                     FileBody -> "(parse.temporaryFile)"
                   ).withDefault(_ => "")
@@ -247,7 +247,7 @@ object SwaggerCodegen extends App {
                     case Some((name, e: _root_.io.swagger.models.auth.ApiKeyAuthDefinition)) =>
                       e.getIn match {
                         case In.HEADER =>
-                          Some(s"""val optApiKey = request.headers.get("${e.getName}")""")
+                          Some(s"""val optApiKey = request.headers.get("\${e.getName}")""")
                         case _ =>
                           None
                       }
@@ -265,7 +265,7 @@ object SwaggerCodegen extends App {
                     case Some((name, e: _root_.io.swagger.models.auth.ApiKeyAuthDefinition)) =>
                       e.getIn match {
                         case In.QUERY =>
-                          (baseQueryParameter + s""" ? q_o"${e.getName}=$$optApiKey"""", true)
+                          (baseQueryParameter + s""" ? q_o"\${e.getName}=\$\$optApiKey"""", true)
                         case _ =>
                           (baseQueryParameter, false)
                       }
@@ -276,15 +276,15 @@ object SwaggerCodegen extends App {
                   val routerBody = (keyDef, hasQueryApiKey) match {
                     case (Some(keyDefStr), false) =>
                       s"""
-                   |$keyDefStr
+                   |\$keyDefStr
                    |optApiKey match {
                    |  case None => Unauthorized.asFuture
                    |  case Some(apiKey) =>
                    |    constructResult($methodName(${op.getParameters.toVector
                            .filter(e => Seq("query", "path").contains(e.getIn.toLowerCase))
-                           .map(e => s"${e.getName}")
+                           .map(e => s"\${e.getName}")
                            .:+("apiKey")
-                           .mkString(", ")})${if (resultType == "Result") ""
+                           .mkString(", ")})\${if (resultType == "Result") ""
                          else ".map(e => Ok(e.asJson))"})
                    |}
                     """.stripMargin.trim
@@ -293,27 +293,27 @@ object SwaggerCodegen extends App {
                        |optApiKey match {
                        |  case None => Unauthorized.asFuture
                        |  case Some(apiKey) =>
-                       |    constructResult($methodName(${op.getParameters.toVector
+                       |    constructResult(\$methodName(\${op.getParameters.toVector
                            .filter(e => Seq("query", "path").contains(e.getIn.toLowerCase))
-                           .map(e => s"${e.getName}")
+                           .map(e => s"\${e.getName}")
                            .:+("apiKey")
-                           .mkString(", ")})${if (resultType == "Result") ""
+                           .mkString(", ")})\${if (resultType == "Result") ""
                          else ".map(e => Ok(e.asJson))"})
                        |}
                     """.stripMargin.trim
                     case _ =>
                       s"""
-                   |constructResult($methodName(${op.getParameters.toVector
+                   |constructResult(\$methodName(\${op.getParameters.toVector
                            .filter(e => Seq("query", "path").contains(e.getIn.toLowerCase))
-                           .map(e => s"${e.getName}")
+                           .map(e => s"\${e.getName}")
                            .mkString(", ")})${if (resultType == "Result") ""
                          else ".map(e => Ok(e.asJson))"})
                     """.stripMargin.trim
                   }
 
                   val routerCase = s"""
-               |case ${method.toString}(p"$playPath"$queryParameterStr) => Action.async${body2parser(consumeType)} { implicit request =>
-               |  $routerBody
+               |case \${method.toString}(p"\$playPath"\$queryParameterStr) => Action.async\${body2parser(consumeType)} { implicit request =>
+               |  \$routerBody
                |}
                """.stripMargin
 
