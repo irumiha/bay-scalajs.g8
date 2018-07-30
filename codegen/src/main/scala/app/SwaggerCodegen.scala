@@ -112,9 +112,9 @@ object SwaggerCodegen extends App {
                         })
                         .flatMap(_.getType)
                         .contains("integer")) {
-                    s"$${int($name)}"
+                    s"\$\${int(\$name)}"
                   } else {
-                    "${" + name + "}"
+                    "\${" + name + "}"
                   }
                 } else e
               }
@@ -139,9 +139,9 @@ object SwaggerCodegen extends App {
                     .filter(_.getIn.toLowerCase == "query")
                     .map { e =>
                       if (e.getRequired) {
-                        s"""q"${e.getName}=$$${e.getName}""""
+                        s"""q"\${e.getName}=\$\$\${e.getName}""""
                       } else {
-                        s"""q_o"${e.getName}=$$${e.getName}""""
+                        s"""q_o"\${e.getName}=\$\$\${e.getName}""""
                       }
                     }
 
