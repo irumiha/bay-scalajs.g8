@@ -110,7 +110,7 @@ object DbCodegen extends App {
 
     // Creating Shared Models
     val path =
-      file"shared/src/main/scala/shared/models/slick/${name.toCamelCase}"
+      file"shared/src/main/scala/shared/models/slick/\${name.toCamelCase}"
     sharedCaseClasses.foreach { caseClass =>
       val caseClassStat = caseClass.parse[Stat].get
       val modelName = caseClassStat.collect {
@@ -118,10 +118,10 @@ object DbCodegen extends App {
           tname.value
       }.head
 
-      val targetFile = path./(s"$modelName.scala")
+      val targetFile = path./(s"\$modelName.scala")
 
       if (targetFile.notExists) {
-        println(s"-- Creating ${targetFile.path.toString}")
+        println(s"-- Creating \${targetFile.path.toString}")
 
         val template =
           s"""
@@ -130,7 +130,7 @@ object DbCodegen extends App {
                |import shared.utils.Codecs._
                |import java.time._
                |
-               |$caseClass
+               |\$caseClass
           """.trim.stripMargin
 
         targetFile.createIfNotExists(createParents = true).overwrite(template)
