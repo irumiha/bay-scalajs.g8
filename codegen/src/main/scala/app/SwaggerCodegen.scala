@@ -45,7 +45,7 @@ object SwaggerCodegen extends App {
       case ("string", Some("date"))      => "LocalDate"
       case ("string", Some("date-time")) => "OffsetDateTime"
       case ("array", _) =>
-        s"List\[${property2Scala(p.asInstanceOf[ArrayProperty].getItems, nested = true)}\]"
+        s"List[\${property2Scala(p.asInstanceOf[ArrayProperty].getItems, nested = true)}]"
       case _ => "String"
     }
 
